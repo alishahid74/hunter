@@ -1,0 +1,13 @@
+# SymbolicHunter Requirements
+
+# Core analysis
+angr>=9.2.0
+claripy>=9.2.0
+
+# Web dashboard
+Flask>=2.3.0
+Flask-SocketIO>=5.3.0
+python-socketio>=5.9.0
+
+# Utilities
+werkzeug>=2.3.0

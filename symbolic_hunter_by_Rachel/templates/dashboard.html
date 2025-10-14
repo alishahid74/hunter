@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SymbolicHunter Dashboard</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f3f4f6;
+            --text: #111827;
+            --text-light: #6b7280;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: var(--primary);
+            font-size: 2.5em;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card h3 {
+            color: var(--text-light);
+            font-size: 0.9em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card .value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+        
+        .panel {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .panel h2 {
+            color: var(--dark);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light);
+        }
+        
+        .upload-area {
+            border: 3px dashed var(--primary);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .upload-area:hover {
+            background: var(--light);
+            border-color: var(--secondary);
+        }
+        
+        .upload-area.dragover {
+            background: var(--primary);
+            border-color: var(--secondary);
+            color: white;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        .form-group input[type="number"],
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--light);
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+        }
+        
+        .job-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .job-item {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .job-item:hover {
+            background: #e5e7eb;
+            transform: translateX(5px);
+        }
+        
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .job-title {
+            font-weight: bold;
+            color: var(--dark);
+        }
+        
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        
+        .status-running {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .status-completed {
+            background: var(--success);
+            color: white;
+        }
+        
+        .status-failed {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .status-pending {
+            background: var(--text-light);
+            color: white;
+        }
+        
+        .progress-bar {
+            background: #e5e7eb;
+            height: 8px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .log-viewer {
+            background: #1f2937;
+            color: #10b981;
+            padding: 20px;
+            border-radius: 10px;
+            height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .log-line {
+            margin-bottom: 5px;
+        }
+        
+        #fileInfo {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 1200px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .close-modal {
+            float: right;
+            font-size: 2em;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>🔍 SymbolicHunter Dashboard</h1>
+                <p style="color: var(--text-light); margin-top: 10px;">Interactive Binary Analysis Platform</p>
+            </div>
+            <button class="btn btn-primary" onclick="showSettings()">⚙️ Settings</button>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Jobs</h3>
+                <div class="value" id="totalJobs">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Active</h3>
+                <div class="value" id="activeJobs" style="color: var(--warning);">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Completed</h3>
+                <div class="value" id="completedJobs" style="color: var(--success);">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Failed</h3>
+                <div class="value" id="failedJobs" style="color: var(--danger);">0</div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="panel">
+                <h2>📤 New Analysis</h2>
+                
+                <div class="upload-area" id="uploadArea">
+                    <p style="font-size: 3em; margin-bottom: 10px;">📁</p>
+                    <p style="font-size: 1.2em; margin-bottom: 10px;">Drag & Drop Binary Here</p>
+                    <p style="color: var(--text-light);">or click to browse</p>
+                    <input type="file" id="fileInput" style="display: none;" accept=".exe,.elf,.bin,.dll">
+                </div>
+                
+                <div id="fileInfo"></div>
+                
+                <div class="form-group">
+                    <label>Max States</label>
+                    <input type="number" id="maxStates" value="1000" min="100" max="10000">
+                </div>
+                
+                <div class="form-group">
+                    <label>Timeout (seconds)</label>
+                    <input type="number" id="timeout" value="300" min="10" max="3600">
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="allFeatures" checked>
+                    <label>Enable All Features</label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="verbose" checked>
+                    <label>Verbose Output</label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="htmlReport" checked>
+                    <label>Generate HTML Report</label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="testExploits">
+                    <label>Test Exploits</label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="genSignatures" checked>
+                    <label>Generate Signatures</label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="memAnalysis" checked>
+                    <label>Memory Analysis</label>
+                </div>
+                
+                <button class="btn btn-success" id="startAnalysis" onclick="startAnalysis()" disabled style="width: 100%; margin-top: 20px;">
+                    🚀 Start Analysis
+                </button>
+            </div>
+            
+            <div class="panel">
+                <h2>📊 Analysis Jobs</h2>
+                <div class="job-list" id="jobList">
+                    <p style="text-align: center; color: var(--text-light); padding: 40px;">
+                        No jobs yet. Upload a binary to start analysis.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Job Details Modal -->
+    <div class="modal" id="jobModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Job Details</h2>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+    
+    <script>
+        let socket;
+        let currentFilePath = null;
+        let jobs = {};
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupWebSocket();
+            setupUpload();
+            loadJobs();
+            updateStats();
+            setInterval(loadJobs, 5000);  // Refresh every 5 seconds
+        });
+        
+        function setupWebSocket() {
+            socket = io('/analysis');
+            
+            socket.on('connected', function(data) {
+                console.log('WebSocket connected');
+            });
+            
+            socket.on('job_update', function(data) {
+                jobs[data.job_id] = data;
+                updateJobList();
+                updateStats();
+            });
+            
+            socket.on('log_message', function(data) {
+                console.log(`[${data.job_id}] ${data.message}`);
+            });
+        }
+        
+        function setupUpload() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            
+            uploadArea.addEventListener('click', () => fileInput.click());
+            
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                handleFile(e.dataTransfer.files[0]);
+            });
+            
+            fileInput.addEventListener('change', (e) => {
+                handleFile(e.target.files[0]);
+            });
+        }
+        
+        async function handleFile(file) {
+            if (!file) return;
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            try {
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentFilePath = data.filepath;
+                    displayFileInfo(data.file_info);
+                    document.getElementById('startAnalysis').disabled = false;
+                }
+            } catch (error) {
+                alert('Upload failed: ' + error.message);
+            }
+        }
+        
+        function displayFileInfo(info) {
+            const fileInfo = document.getElementById('fileInfo');
+            fileInfo.style.display = 'block';
+            fileInfo.innerHTML = `
+                <strong>${info.name}</strong><br>
+                Size: ${info.size_formatted}<br>
+                Type: ${info.type}<br>
+                MD5: <code>${info.hashes?.md5 || 'N/A'}</code>
+            `;
+        }
+        
+        async function startAnalysis() {
+            if (!currentFilePath) return;
+            
+            const options = {
+                max_states: parseInt(document.getElementById('maxStates').value),
+                timeout: parseInt(document.getElementById('timeout').value),
+                all_features: document.getElementById('allFeatures').checked,
+                verbose: document.getElementById('verbose').checked,
+                html_report: document.getElementById('htmlReport').checked,
+                test_exploits: document.getElementById('testExploits').checked,
+                generate_signatures: document.getElementById('genSignatures').checked,
+                memory_analysis: document.getElementById('memAnalysis').checked
+            };
+            
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        binary_path: currentFilePath,
+                        options: options
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    jobs[data.job_id] = data.job;
+                    updateJobList();
+                    updateStats();
+                    
+                    // Reset form
+                    currentFilePath = null;
+                    document.getElementById('fileInfo').style.display = 'none';
+                    document.getElementById('startAnalysis').disabled = true;
+                    document.getElementById('fileInput').value = '';
+                }
+            } catch (error) {
+                alert('Failed to start analysis: ' + error.message);
+            }
+        }
+        
+        async function loadJobs() {
+            try {
+                const response = await fetch('/api/jobs');
+                jobs = await response.json();
+                updateJobList();
+            } catch (error) {
+                console.error('Failed to load jobs:', error);
+            }
+        }
+        
+        function updateJobList() {
+            const jobList = document.getElementById('jobList');
+            const jobArray = Object.values(jobs).sort((a, b) => 
+                new Date(b.start_time || 0) - new Date(a.start_time || 0)
+            );
+            
+            if (jobArray.length === 0) {
+                jobList.innerHTML = `
+                    <p style="text-align: center; color: var(--text-light); padding: 40px;">
+                        No jobs yet. Upload a binary to start analysis.
+                    </p>
+                `;
+                return;
+            }
+            
+            jobList.innerHTML = jobArray.map(job => `
+                <div class="job-item" onclick="showJobDetails('${job.job_id}')">
+                    <div class="job-header">
+                        <div class="job-title">${job.binary_path}</div>
+                        <div class="status-badge status-${job.status}">${job.status.toUpperCase()}</div>
+                    </div>
+                    ${job.status === 'running' ? `
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${job.progress}%"></div>
+                        </div>
+                    ` : ''}
+                    <div style="color: var(--text-light); font-size: 0.9em; margin-top: 5px;">
+                        Started: ${job.start_time ? new Date(job.start_time).toLocaleString() : 'N/A'}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        async function showJobDetails(jobId) {
+            const job = jobs[jobId];
+            if (!job) return;
+            
+            let content = `
+                <p><strong>Binary:</strong> ${job.binary_path}</p>
+                <p><strong>Status:</strong> <span class="status-badge status-${job.status}">${job.status}</span></p>
+                <p><strong>Progress:</strong> ${job.progress}%</p>
+                <p><strong>Started:</strong> ${job.start_time ? new Date(job.start_time).toLocaleString() : 'N/A'}</p>
+            `;
+            
+            if (job.status === 'completed') {
+                // Try to load results
+                try {
+                    const response = await fetch(`/api/job/${jobId}/results`);
+                    if (response.ok) {
+                        const results = await response.json();
+                        content += generateResultsView(results);
+                    }
+                } catch (error) {
+                    console.error('Failed to load results:', error);
+                }
+                
+                content += `
+                    <hr style="margin: 20px 0;">
+                    <h3>📥 Downloads</h3>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
+                        <button class="btn btn-primary" onclick="viewReport('${jobId}')">
+                            📊 View HTML Report
+                        </button>
+                        <button class="btn btn-primary" onclick="downloadFile('${jobId}', 'analysis.json')">
+                            📄 JSON Results
+                        </button>
+                        <button class="btn btn-primary" onclick="downloadFile('${jobId}', '${job.binary_path.split('/').pop()}.yar')">
+                            🛡️ YARA Rule
+                        </button>
+                        <button class="btn btn-primary" onclick="downloadFile('${jobId}', 'memory_analysis.json')">
+                            💾 Memory Analysis
+                        </button>
+                        <button class="btn btn-primary" onclick="downloadFile('${jobId}', '${job.binary_path.split('/').pop()}_iocs.txt')">
+                            📋 IOC List
+                        </button>
+                    </div>
+                `;
+            }
+            
+            if (job.status === 'running') {
+                content += `
+                    <button class="btn btn-danger" onclick="cancelJob('${jobId}')" style="margin-top: 20px;">
+                        ❌ Cancel Job
+                    </button>
+                `;
+            }
+            
+            document.getElementById('modalTitle').textContent = `Job: ${job.binary_path}`;
+            document.getElementById('modalContent').innerHTML = content;
+            document.getElementById('jobModal').classList.add('show');
+        }
+        
+        function generateResultsView(results) {
+            const stats = results.statistics || {};
+            const vulns = results.vulnerabilities || {};
+            const taintAnalysis = results.taint_analysis || {};
+            
+            let html = `
+                <hr style="margin: 20px 0;">
+                <h3>📊 Analysis Results</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0;">
+                    <div style="background: var(--light); padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 2em; font-weight: bold; color: var(--danger);">${Object.values(vulns).flat().length}</div>
+                        <div style="color: var(--text-light); margin-top: 5px;">Total Vulnerabilities</div>
+                    </div>
+                    <div style="background: var(--light); padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 2em; font-weight: bold; color: var(--primary);">${stats.paths_explored || 0}</div>
+                        <div style="color: var(--text-light); margin-top: 5px;">Paths Explored</div>
+                    </div>
+                    <div style="background: var(--light); padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 2em; font-weight: bold; color: var(--success);">${(stats.code_coverage || 0).toFixed(1)}%</div>
+                        <div style="color: var(--text-light); margin-top: 5px;">Code Coverage</div>
+                    </div>
+                </div>
+                
+                <h4 style="margin-top: 20px;">🐛 Vulnerabilities by Type</h4>
+                <div style="max-height: 300px; overflow-y: auto; margin-top: 10px;">
+            `;
+            
+            for (const [vulnType, instances] of Object.entries(vulns)) {
+                if (instances.length > 0) {
+                    html += `
+                        <div style="background: var(--light); padding: 15px; border-radius: 8px; margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <strong style="color: var(--dark);">${vulnType.replace(/_/g, ' ').toUpperCase()}</strong>
+                                <span style="background: var(--danger); color: white; padding: 3px 10px; border-radius: 12px; font-size: 0.85em;">
+                                    ${instances.length}
+                                </span>
+                            </div>
+                            <div style="margin-top: 10px; font-size: 0.9em; color: var(--text-light);">
+                                First 3 instances:<br>
+                                ${instances.slice(0, 3).map(v => 
+                                    `• ${v.address || 'N/A'}: ${v.description || 'No description'}`
+                                ).join('<br>')}
+                                ${instances.length > 3 ? `<br>... and ${instances.length - 3} more` : ''}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            html += `</div>`;
+            
+            // Taint Analysis
+            if (taintAnalysis.tainted_sinks && taintAnalysis.tainted_sinks.length > 0) {
+                html += `
+                    <h4 style="margin-top: 20px; color: var(--danger);">💉 Taint Analysis</h4>
+                    <div style="background: #fee; padding: 15px; border-radius: 8px; border-left: 4px solid var(--danger);">
+                        <strong>${taintAnalysis.tainted_sinks.length} tainted data flows detected!</strong>
+                        <div style="margin-top: 10px; font-size: 0.9em;">
+                            ${taintAnalysis.tainted_sinks.slice(0, 3).map(sink => `
+                                • ${sink.function} at ${sink.address}: ${sink.vulnerability_type || sink.type}
+                            `).join('<br>')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Memory Analysis
+            if (results.memory_analysis) {
+                const mem = results.memory_analysis;
+                html += `
+                    <h4 style="margin-top: 20px;">💾 Memory Analysis</h4>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px;">
+                        <div style="background: var(--light); padding: 10px; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 1.5em; font-weight: bold;">${(mem.shellcode || []).length}</div>
+                            <div style="font-size: 0.85em; color: var(--text-light);">Shellcode Patterns</div>
+                        </div>
+                        <div style="background: var(--light); padding: 10px; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 1.5em; font-weight: bold;">${(mem.rop_gadgets || []).length}</div>
+                            <div style="font-size: 0.85em; color: var(--text-light);">ROP Gadgets</div>
+                        </div>
+                        <div style="background: var(--light); padding: 10px; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 1.5em; font-weight: bold;">${(mem.suspicious_strings || []).length}</div>
+                            <div style="font-size: 0.85em; color: var(--text-light);">Suspicious Strings</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Dangerous APIs
+            if (results.dangerous_functions && results.dangerous_functions.length > 0) {
+                html += `
+                    <h4 style="margin-top: 20px;">⚡ Dangerous API Calls (${results.dangerous_functions.length})</h4>
+                    <div style="margin-top: 10px;">
+                        ${results.dangerous_functions.slice(0, 5).map(api => `
+                            <span style="display: inline-block; background: var(--warning); color: white; padding: 5px 10px; border-radius: 5px; margin: 3px; font-size: 0.85em;">
+                                ${api.name}
+                            </span>
+                        `).join('')}
+                        ${results.dangerous_functions.length > 5 ? `<span style="color: var(--text-light);">... +${results.dangerous_functions.length - 5} more</span>` : ''}
+                    </div>
+                `;
+            }
+            
+            return html;
+        }
+        
+        function viewReport(jobId) {
+            window.open(`/api/job/${jobId}/report`, '_blank');
+        }
+        
+        function downloadFile(jobId, filename) {
+            window.open(`/api/job/${jobId}/download/${filename}`, '_blank');
+        }
+        
+        function closeModal() {
+            document.getElementById('jobModal').classList.remove('show');
+        }
+        
+        async function cancelJob(jobId) {
+            if (!confirm('Are you sure you want to cancel this job?')) return;
+            
+            try {
+                await fetch(`/api/job/${jobId}/cancel`, {method: 'POST'});
+                closeModal();
+                loadJobs();
+            } catch (error) {
+                alert('Failed to cancel job: ' + error.message);
+            }
+        }
+        
+        async function updateStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const stats = await response.json();
+                
+                document.getElementById('totalJobs').textContent = stats.total_jobs;
+                document.getElementById('activeJobs').textContent = stats.active_jobs;
+                document.getElementById('completedJobs').textContent = stats.completed_jobs;
+                document.getElementById('failedJobs').textContent = stats.failed_jobs;
+            } catch (error) {
+                console.error('Failed to update stats:', error);
+            }
+        }
+        
+        function showSettings() {
+            alert('Settings panel coming soon!');
+        }
+    </script>
+</body>
+</html>

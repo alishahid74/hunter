@@ -1,0 +1,382 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SymbolicHunter Analysis Report</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 40px;
+            background: #f8f9fa;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+        
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card .value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2a5298;
+        }
+        
+        .stat-card.critical .value {
+            color: #dc3545;
+        }
+        
+        .stat-card.warning .value {
+            color: #ffc107;
+        }
+        
+        .stat-card.success .value {
+            color: #28a745;
+        }
+        
+        .section {
+            padding: 40px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .section h2 {
+            color: #2a5298;
+            margin-bottom: 25px;
+            font-size: 2em;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .risk-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .risk-critical {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .risk-high {
+            background: #fd7e14;
+            color: white;
+        }
+        
+        .risk-medium {
+            background: #ffc107;
+            color: #000;
+        }
+        
+        .risk-low {
+            background: #28a745;
+            color: white;
+        }
+        
+        .vuln-list {
+            list-style: none;
+        }
+        
+        .vuln-item {
+            background: #f8f9fa;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #2a5298;
+            transition: all 0.3s ease;
+        }
+        
+        .vuln-item:hover {
+            background: #e9ecef;
+            border-left-width: 8px;
+        }
+        
+        .vuln-item.critical {
+            border-left-color: #dc3545;
+        }
+        
+        .vuln-item h4 {
+            color: #2a5298;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .vuln-detail {
+            color: #666;
+            margin: 5px 0;
+            font-size: 0.95em;
+        }
+        
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+        
+        .exploit-input {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: monospace;
+            word-break: break-all;
+        }
+        
+        .progress-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 30px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #2a5298, #667eea);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: width 1s ease;
+        }
+        
+        .api-category {
+            display: inline-block;
+            padding: 5px 12px;
+            background: #e9ecef;
+            border-radius: 15px;
+            margin: 3px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+        
+        .api-category.memory { background: #ffc107; color: #000; }
+        .api-category.process { background: #dc3545; color: white; }
+        .api-category.network { background: #17a2b8; color: white; }
+        .api-category.anti_debug { background: #6f42c1; color: white; }
+        
+        .taint-flow {
+            background: linear-gradient(90deg, #ff6b6b 0%, #feca57 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        .taint-flow h4 {
+            margin-bottom: 10px;
+        }
+        
+        .footer {
+            background: #2a5298;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        @media print {
+            body { background: white; }
+            .container { box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 SymbolicHunter</h1>
+            <p>Binary Analysis Report</p>
+            <p style="font-size: 0.9em; opacity: 0.8;">Generated: 2025-10-08 19:30:38</p>
+        </div>
+        
+        
+        <div class="summary">
+            <div class="stat-card critical">
+                <h3>Total Vulnerabilities</h3>
+                <div class="value">156</div>
+            </div>
+            <div class="stat-card warning">
+                <h3>Taint Sinks Found</h3>
+                <div class="value">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Functions Discovered</h3>
+                <div class="value">535</div>
+            </div>
+            <div class="stat-card">
+                <h3>Paths Explored</h3>
+                <div class="value">5</div>
+            </div>
+            <div class="stat-card critical">
+                <h3>Code Coverage</h3>
+                <div class="value">8.2%</div>
+            </div>
+            <div class="stat-card">
+                <h3>Analysis Time</h3>
+                <div class="value">30.4s</div>
+            </div>
+        </div>
+        
+        
+        <div class="section">
+            <h2>⚠️ Risk Assessment</h2>
+            <div style="text-align: center; padding: 30px;">
+                <div class="risk-badge risk-high" style="font-size: 2em; padding: 20px 40px;">
+                    HIGH RISK
+                </div>
+                <p style="margin-top: 20px; color: #666; font-size: 1.1em;">
+                    Binary: <strong>/home/cyber/lab/evasive-angr/samples/injection_mock_pe.exe</strong>
+                </p>
+            </div>
+        </div>
+        
+        
+        
+        <div class="section">
+            <h2>🐛 Vulnerabilities Detected</h2>
+            <ul class="vuln-list">
+        
+            <li class="vuln-item ">
+                <h4>Buffer Overflow (81 found)</h4>
+            
+                <div class="vuln-detail">
+                    <strong>Address:</strong> 0x401010<br>
+                    <strong>Description:</strong> Symbolic pointer could overflow buffer bounds
+                </div>
+                
+                <div class="vuln-detail">
+                    <strong>Address:</strong> 0x401054<br>
+                    <strong>Description:</strong> Symbolic pointer could overflow buffer bounds
+                </div>
+                
+                <div class="vuln-detail">
+                    <strong>Address:</strong> 0x401062<br>
+                    <strong>Description:</strong> Symbolic pointer could overflow buffer bounds
+                </div>
+                <p style="margin-top: 10px; color: #666;">... and 78 more</p></li>
+            <li class="vuln-item ">
+                <h4>Null Deref (75 found)</h4>
+            
+                <div class="vuln-detail">
+                    <strong>Address:</strong> 0x401010<br>
+                    <strong>Description:</strong> Register can be NULL and may be dereferenced
+                </div>
+                
+                <div class="vuln-detail">
+                    <strong>Address:</strong> 0x401010<br>
+                    <strong>Description:</strong> Register can be NULL and may be dereferenced
+                </div>
+                
+                <div class="vuln-detail">
+                    <strong>Address:</strong> 0x401010<br>
+                    <strong>Description:</strong> Register can be NULL and may be dereferenced
+                </div>
+                <p style="margin-top: 10px; color: #666;">... and 72 more</p></li>
+            </ul>
+        </div>
+        
+        
+        <div class="section">
+            <h2>⚡ Dangerous API Calls</h2>
+            <p style="margin-bottom: 20px; color: #666;">Found 21 dangerous API calls in the binary</p>
+        <h3 style="margin: 20px 0 10px 0;">FORMAT</h3><div><span class="api-category format">___mingw_printf</span><span class="api-category format">_fprintf</span><span class="api-category format">_fprintf</span><span class="api-category format">_vfprintf</span><span class="api-category format">_vfprintf</span><span class="api-category format">_vfprintf</span><span class="api-category format">fprintf</span><span class="api-category format">fprintf</span><span class="api-category format">vfprintf</span><span class="api-category format">vfprintf</span><span style="margin-left: 10px; color: #666;">... and 1 more</span></div><h3 style="margin: 20px 0 10px 0;">LIBRARY</h3><div><span class="api-category library">GetProcAddress</span><span class="api-category library">LoadLibraryA</span></div><h3 style="margin: 20px 0 10px 0;">MEMORY</h3><div><span class="api-category memory">_calloc</span><span class="api-category memory">_malloc</span><span class="api-category memory">VirtualProtect</span><span class="api-category memory">calloc</span><span class="api-category memory">malloc</span></div><h3 style="margin: 20px 0 10px 0;">PROCESS</h3><div><span class="api-category process">__FindPESectionExec</span></div><h3 style="margin: 20px 0 10px 0;">STRING</h3><div><span class="api-category string">___mingw_GetSectionForAddress</span><span class="api-category string">___mingw_GetSectionCount</span></div></div>
+        
+        <div class="section">
+            <h2>💡 Recommendations</h2>
+            <ul style="list-style-position: inside; color: #666; line-height: 2;">
+                <li>Perform manual review of all critical findings</li>
+                <li>Test exploit candidates in isolated sandbox environment</li>
+                <li>Implement input validation for all user-controlled data</li>
+                <li>Use address space layout randomization (ASLR)</li>
+                <li>Enable stack canaries and DEP/NX protection</li>
+                <li>Consider additional dynamic analysis tools</li>
+            </ul>
+        </div>
+        
+        
+        <div class="footer">
+            <p>SymbolicHunter - Powered by angr</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">Advanced Binary Analysis & Vulnerability Detection</p>
+        </div>
+    </div>
+    
+    <script>
+        // Animate progress bars
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.progress-fill').forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => bar.style.width = width, 100);
+            });
+        });
+    </script>
+</body>
+</html>
