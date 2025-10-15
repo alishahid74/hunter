@@ -1,0 +1,442 @@
+{
+  "binary": "/home/cyber/lab/evasive-angr/samples/injection_mock_pe.exe",
+  "analysis_time": "2025-10-08T08:43:50.458969",
+  "total_detections": 57,
+  "detections": {
+    "code_injection": [
+      {
+        "type": "code_injection",
+        "import": "GetProcAddress",
+        "address": "N/A",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.435457"
+      },
+      {
+        "type": "code_injection",
+        "import": "LoadLibraryA",
+        "address": "N/A",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.435924"
+      },
+      {
+        "type": "code_injection",
+        "import": "VirtualProtect",
+        "address": "N/A",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.436111"
+      }
+    ],
+    "anti_sandbox": [
+      {
+        "type": "anti_sandbox",
+        "import": "Sleep",
+        "address": "N/A",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.436022"
+      }
+    ],
+    "anti_vm": [
+      {
+        "type": "anti_vm",
+        "import": "VirtualProtect",
+        "address": "N/A",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.436076"
+      },
+      {
+        "type": "anti_vm",
+        "import": "VirtualQuery",
+        "address": "N/A",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.436145"
+      }
+    ],
+    "anti_debugging": [
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x401286",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.437804"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x4012ce",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.437930"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x401359",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.437982"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x4016c8",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.438560"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x401760",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.438649"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x401989",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.438954"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x401a33",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.439189"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x4028cd",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.441707"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x402a60",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.442686"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x402ae5",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.442938"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x402ce3",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.443098"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x402e55",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.443410"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x402d5a",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.443699"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x402ff8",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.443971"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x402ed0",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.444112"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x402b85",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.444236"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x402fe0",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.444332"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x402f7b",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.444445"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x402bb6",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.444587"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x402bb4",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.444793"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x402f3e",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.444855"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x4031c0",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.445113"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x403548",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.445264"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x4031f5",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.445326"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x403240",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.445400"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x40332e",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.445500"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x403210",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.445553"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x4034b0",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.445672"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x4032f0",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.445731"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x403460",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.445838"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x403236",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.445885"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x40339e",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.445938"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x403340",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.445998"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x4033a4",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.446085"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x403749",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.446792"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x404490",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.448981"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x4046a7",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.449142"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x4046a0",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.449232"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x404db4",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.449696"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x404e7a",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.450068"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x4053c0",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.450823"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x4055b9",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.451027"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x4055a9",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.451077"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x405a99",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.451314"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x4069fc",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.451755"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x406893",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.451935"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x405917",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.451984"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x406d4f",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.452474"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x4070f0",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.454017"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x4081d0",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.456100"
+      },
+      {
+        "type": "anti_debugging",
+        "technique": "INT3_breakpoint_check",
+        "address": "0x408940",
+        "severity": "HIGH",
+        "timestamp": "2025-10-08T08:43:50.457781"
+      }
+    ]
+  },
+  "severity_summary": {
+    "CRITICAL": 0,
+    "HIGH": 57,
+    "MEDIUM": 0,
+    "LOW": 0
+  },
+  "mitigations": {
+    "anti_sandbox": [
+      "Increase timeout values for sandbox analysis",
+      "Simulate user interaction (mouse, keyboard)",
+      "Hook Sleep functions to skip delays",
+      "Modify system artifact checks"
+    ],
+    "anti_vm": [
+      "Patch CPUID checks to hide VM signatures",
+      "Modify VM detection strings in memory",
+      "Use paravirtualization features to hide VM",
+      "Patch registry/file checks for VM artifacts"
+    ],
+    "anti_debugging": [
+      "Patch ptrace calls: Replace with NOP (0x90) instructions",
+      "Patch INT3 instructions: Replace 0xCC with 0x90",
+      "Hook IsDebuggerPresent to return FALSE",
+      "Use ScyllaHide or similar anti-anti-debug plugins",
+      "Patch RDTSC: Hook and return consistent values",
+      "Clear debug register checks: Modify DR register access code"
+    ]
+  }
+}

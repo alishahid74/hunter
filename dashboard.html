@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Evasion Detection Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #1e1e1e; color: #fff; }
+        h1 { color: #4CAF50; }
+        .detection { background: #2d2d2d; padding: 15px; margin: 10px 0; border-left: 4px solid #f44336; }
+        .critical { border-left-color: #f44336; }
+        .high { border-left-color: #ff9800; }
+        .medium { border-left-color: #ffeb3b; }
+        .low { border-left-color: #4CAF50; }
+        .summary { background: #2d2d2d; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #444; }
+        th { background: #333; }
+    </style>
+</head>
+<body>
+    <h1>🛡️ AVSU/AVIZO Evasion Detection Dashboard</h1>
+    <div class="summary">
+        <h2>Detection Summary</h2>
+        <p>Total Binaries Analyzed: 13</p>
+        <p>Total Detections: 130</p>
+    </div>
+    <h2>Recent Detections</h2>
+
+    <div class="detection high">
+        <h3>/home/cyber/lab/evasive-angr/samples/injection_demo_patched</h3>
+        <p><strong>Time:</strong> 2025-10-08T09:50:00.405033</p>
+        <p><strong>Total Detections:</strong> 3</p>
+        <p><strong>Severity:</strong> CRITICAL: 2, 
+           HIGH: 1, 
+           MEDIUM: 0</p>
+    </div>
+
+    <div class="detection high">
+        <h3>/home/cyber/lab/evasive-angr/samples/antidebug_timing</h3>
+        <p><strong>Time:</strong> 2025-10-08T09:50:00.481366</p>
+        <p><strong>Total Detections:</strong> 5</p>
+        <p><strong>Severity:</strong> CRITICAL: 0, 
+           HIGH: 3, 
+           MEDIUM: 2</p>
+    </div>
+
+    <div class="detection high">
+        <h3>/home/cyber/lab/evasive-angr/samples/test/benign_i386</h3>
+        <p><strong>Time:</strong> 2025-10-08T09:50:00.576968</p>
+        <p><strong>Total Detections:</strong> 0</p>
+        <p><strong>Severity:</strong> CRITICAL: 0, 
+           HIGH: 0, 
+           MEDIUM: 0</p>
+    </div>
+
+    <div class="detection high">
+        <h3>/home/cyber/lab/evasive-angr/samples/test/injection_mock_i386</h3>
+        <p><strong>Time:</strong> 2025-10-08T09:50:00.688092</p>
+        <p><strong>Total Detections:</strong> 0</p>
+        <p><strong>Severity:</strong> CRITICAL: 0, 
+           HIGH: 0, 
+           MEDIUM: 0</p>
+    </div>
+
+    <div class="detection high">
+        <h3>/home/cyber/lab/evasive-angr/samples/injection_mock_pe.exe</h3>
+        <p><strong>Time:</strong> 2025-10-08T09:50:02.004985</p>
+        <p><strong>Total Detections:</strong> 57</p>
+        <p><strong>Severity:</strong> CRITICAL: 0, 
+           HIGH: 57, 
+           MEDIUM: 0</p>
+    </div>
+
+    <div class="detection high">
+        <h3>/home/cyber/lab/evasive-angr/samples/antidebug_demo</h3>
+        <p><strong>Time:</strong> 2025-10-08T09:50:02.086742</p>
+        <p><strong>Total Detections:</strong> 2</p>
+        <p><strong>Severity:</strong> CRITICAL: 0, 
+           HIGH: 2, 
+           MEDIUM: 0</p>
+    </div>
+
+    <div class="detection high">
+        <h3>/home/cyber/lab/evasive-angr/samples/test/injection_mock_i386_fixed</h3>
+        <p><strong>Time:</strong> 2025-10-08T09:50:02.205795</p>
+        <p><strong>Total Detections:</strong> 0</p>
+        <p><strong>Severity:</strong> CRITICAL: 0, 
+           HIGH: 0, 
+           MEDIUM: 0</p>
+    </div>
+
+    <div class="detection high">
+        <h3>/home/cyber/lab/evasive-angr/samples/antidebug_tracerpid</h3>
+        <p><strong>Time:</strong> 2025-10-08T09:50:02.282496</p>
+        <p><strong>Total Detections:</strong> 1</p>
+        <p><strong>Severity:</strong> CRITICAL: 0, 
+           HIGH: 1, 
+           MEDIUM: 0</p>
+    </div>
+
+    <div class="detection high">
+        <h3>/home/cyber/lab/evasive-angr/samples/injection_demo</h3>
+        <p><strong>Time:</strong> 2025-10-08T09:50:02.388186</p>
+        <p><strong>Total Detections:</strong> 3</p>
+        <p><strong>Severity:</strong> CRITICAL: 2, 
+           HIGH: 1, 
+           MEDIUM: 0</p>
+    </div>
+
+    <div class="detection high">
+        <h3>/home/cyber/lab/evasive-angr/samples/benign_i386</h3>
+        <p><strong>Time:</strong> 2025-10-08T09:50:02.494133</p>
+        <p><strong>Total Detections:</strong> 0</p>
+        <p><strong>Severity:</strong> CRITICAL: 0, 
+           HIGH: 0, 
+           MEDIUM: 0</p>
+    </div>
+
+</body>
+</html>
